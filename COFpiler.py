@@ -82,19 +82,19 @@ def rot(s, num_rot, rot_angle):
 
 # ###################### Input parameters ######################
 parser = argparse.ArgumentParser(description="Create a structure of a 2D layer which follows a parametric function")
-parser.add_argument("--data", type=str, help="The input file include data needed, form as: form as: the 1st column "
+parser.add_argument("-data", type=str, help="The input file include data needed, form as: form as: the 1st column "
                                              "is the stacking_type, the 2nd is the Erel (relative energies), the 3rd, "
                                              "4th and 5th columns are the x, y, z (vector of the shift_vectors)")
-parser.add_argument("--i", type=str, help="The input structure")
-parser.add_argument("--T", type=int, default=293, help="The experimental synthesize temperature")
-parser.add_argument("--path", type=str, help="The path where the infile and instr are, the output structure will also "
+parser.add_argument("-i", "--instr", type=str, help="The input structure")
+parser.add_argument("-T", "--tem", type=int, default=293, help="The experimental synthesize temperature")
+parser.add_argument("-path", type=str, help="The path where the infile and instr are, the output structure will also "
                                              "save there")
-parser.add_argument("--o", type=str, default="cif", help="The output structure format")
-parser.add_argument("--s", type=str, default='C6', help="the symmetry for the structure, C3, C6 or C4")
-parser.add_argument("--mirror", type=bool, default=True, help="enable the consider of mirror shift or not")
-parser.add_argument("--mplane", type=list, default=[0.001, 1], help="the mirror plane for s2 shift")
-parser.add_argument("--L", type=int, help="the layer number")
-parser.add_argument("--M", type=int, help="the model number")
+parser.add_argument("-o", "--outstr_format",  type=str, default="cif", help="The output structure format")
+parser.add_argument("-s", "--symmetry", type=str, default='C6', help="the symmetry for the structure, C3, C6 or C4")
+parser.add_argument("-m", "--mirror", type=bool, default=True, help="enable the consider of mirror shift or not")
+parser.add_argument("-mp", "--mplane", type=list, default=[0.001, 1], help="the mirror plane for s2 shift")
+parser.add_argument("-L", type=int, help="the layer number")
+parser.add_argument("-M", type=int, help="the model number")
 output_folder = '/statistical_structures/'
 
 args = parser.parse_args()
