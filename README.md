@@ -2,7 +2,7 @@
 
 Build the statistical structure for layered materials by stacking layers following the Maxwell-Boltzmann energy distribution of their stacking modes.
 
-## usage:
+## Usage:
 
 ```
 python COFpiler.py [-h] [--path PATH] [--data DATA] [--i I] [--o O] [--T T] [--s S] [--mirror MIRROR] [--mplane MPLANE] [--L L] [--M M]
@@ -25,5 +25,9 @@ python COFpiler.py [-h] [--path PATH] [--data DATA] [--i I] [--o O] [--T T] [--s
 -M M                 The model number
 ```
   
-  ## License
-  MIT © Richard McRichface
+## Data file: 
+The data file saved the relative energies and slipped vectors of all stacking configurations. They can be in xlsx or csv format. The columns should be named as stacking_type, Erel, x, y, z. Please check the data_example.xlsx for more information 
+
+
+## License
+MIT © Richard McRichface
