@@ -189,7 +189,7 @@ for fnum in range(1, args.M+1):
     structure.set_cell([structure.get_cell()[0], structure.get_cell()[1], c], scale_atoms=False)
     view(structure)
 
-    out_filename = str(stacking_types[s_p]) + '_' + str(fnum) + '' + str(args.L) + 'l.' + args.output_format
+    out_filename = str(stacking_types[s_p]) + '_' + str(fnum) + '_' + str(args.L) + 'l.' + args.output_format
     write(args.path + out_filename, structure, format=args.output_format)
 
 f.close()
