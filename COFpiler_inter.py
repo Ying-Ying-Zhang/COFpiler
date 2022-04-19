@@ -149,7 +149,7 @@ for fnum in range(1, args.M+1):
             # move the intercalated monomer back to the center, which will have a new rotated slip vector
             for i in range(len(str_in)):
                 str_in[i].position[0:2] = str_in[i].position[0:2] - s_vector[0:2]
-            mirror_p = np.random.choice(2, p=(0, 1))
+            mirror_p = np.random.choice(2, p=(1/2, 1/2))
             if mirror_p == 0:
                 str_in = mirror(str_in.copy(), s_vector)[0]
                 s_vector = mirror(str_in.copy(), s_vector)[1]
