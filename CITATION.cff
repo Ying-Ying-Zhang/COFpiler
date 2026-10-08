@@ -1,8 +1,26 @@
-cff-version: 1.0
+cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
   - family-names: Zhang
     given-names: Yingying
-title: Ying-Ying-Zhang/COFpiler: Version 1.0
-version: v1.0
-date-released: 2022-02-16
+title: "COFpiler"
+version: 1.1.0
+license: MIT
+repository-code: "https://github.com/Ying-Ying-Zhang/COFpiler"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Zhang
+      given-names: Yingying
+    - family-names: Položij
+      given-names: Miroslav
+    - family-names: Heine
+      given-names: Thomas
+  title: "Statistical Representation of Stacking Disorder in Layered Covalent Organic Frameworks"
+  journal: "Chemistry of Materials"
+  volume: 34
+  issue: 5
+  start: 2376
+  end: 2381
+  year: 2022
+  doi: "10.1021/acs.chemmater.1c04365"

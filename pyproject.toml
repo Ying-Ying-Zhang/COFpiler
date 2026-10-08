@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cofpiler"
+version = "1.1.0"
+description = "Statistical stacking models of layered materials from Boltzmann-weighted stacking modes"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Yingying Zhang" }]
+requires-python = ">=3.10"
+dependencies = [
+    "ase>=3.22",
+    "numpy>=1.23",
+    "openpyxl>=3.0",
+    "pandas>=1.5",
+    "pint>=0.20",
+    "pydantic>=2.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+dev = ["cofpiler[test]", "mypy", "ruff"]
+
+[project.scripts]
+cofpiler = "cofpiler.cli:stack_main"
+cofpiler-intercalate = "cofpiler.cli:intercalate_main"
+
+[project.urls]
+Repository = "https://github.com/Ying-Ying-Zhang/COFpiler"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cofpiler"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning:ase.*"]
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["legacy"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.mypy]
+files = ["src"]
+python_version = "3.10"
+disallow_untyped_defs = true
+ignore_missing_imports = true
