@@ -1,4 +1,4 @@
-"""Statistical stacking models of layered materials (port of the 2022 COFpiler.py)."""
+"""Statistical stacking models of layered materials (based on the 2022 COFpiler.py)."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ Rng = np.random.Generator | np.random.RandomState
 
 SUPPORTED_SYMMETRIES = (3, 4, 6)
 SLIP_KINDS = ("ecl", "s1", "s2")
+Family = Literal["AA", "AB", "ABC"]
 
 
 @dataclass(frozen=True)
@@ -43,15 +44,33 @@ def ab_lattice_offset(
     return np.array([0, np.sqrt(3) / 3 * a, 0])
 
 
-def _check_supported(names: Sequence[str]) -> None:
+def stacking_family(name: str) -> Family:
+    """Whether a stacking type is AA, AB or ABC, from its name."""
+    if "AA" in name:
+        return "AA"
+    if "ABC" in name:
+        return "ABC"
+    if "AB_" in name:
+        return "AB"
+    raise ValueError(f"stacking type {name!r} must contain AA, AB_ or ABC")
+
+
+def _check_supported(
+    names: Sequence[str], symmetry: int, ab_shift: Literal["slip", "full"] | None
+) -> list[Family]:
+    families = [stacking_family(name) for name in names]
     for name in names:
-        if "AA" not in name and "AB_" not in name:
-            raise NotImplementedError(
-                f"stacking type {name!r}: only AA and AB_ types are supported. "
-                "ABC types have no code path in the 2022 algorithm (see README, Known issues)."
-            )
         if not any(kind in name for kind in SLIP_KINDS):
             raise ValueError(f"stacking type {name!r} must contain one of {', '.join(SLIP_KINDS)}")
+    if symmetry == 4 and "ABC" in families:
+        raise NotImplementedError("ABC stacking is not implemented for C4 lattices")
+    if ab_shift is None and set(families) != {"AA"}:
+        raise ValueError(
+            "the table has AB or ABC stacking types: set ab_shift (command line: --ab-shift) "
+            "to 'slip' if their x, y are the slip on top of the AB position, "
+            "or to 'full' if they include the offset to the AB position"
+        )
+    return families
 
 
 def _c4_table(table: StackingTable, ab_slip: Literal["axis", "diag"]) -> StackingTable:
@@ -76,19 +95,28 @@ def build_stacked_model(
     mirror: bool = True,
     mirror_plane: Sequence[float] = (0.001, 1.0),
     ab_slip: Literal["axis", "diag"] | None = None,
+    ab_shift: Literal["slip", "full"] | None = None,
     rng: Rng | None = None,
 ) -> tuple[Atoms, list[LayerRecord]]:
     """Stack `n_layers` copies of `monolayer`, drawing each interlayer shift from `table`.
 
     Each layer draws a stacking type with its Boltzmann probability at `temperature` (K)
-    and a random symmetry-equivalent direction for the shift. Results match the 2022
-    script, including its known issues (see README).
+    and a random symmetry-equivalent direction for the shift. AB and ABC layers also
+    shift by the offset to the AB position, turned to a random symmetry-equivalent
+    direction. AB flips the offset every other layer and ABC keeps it; since the
+    direction is random, both give the same set of interlayer shifts and differ in
+    energy, as in AB(C)stat of the 2022 paper.
+
+    `ab_shift` says whether the x, y of AB and ABC rows are the slip on top of the
+    offset ("slip") or include it ("full"); it is required when the table has such rows.
+
+    Models of AA layers match the 2022 script, including its known issues (see README).
     """
     if n_layers < 2:
         raise ValueError(f"n_layers must be at least 2, got {n_layers}")
     if symmetry not in SUPPORTED_SYMMETRIES:
         raise ValueError(f"symmetry must be one of {SUPPORTED_SYMMETRIES}, got {symmetry}")
-    _check_supported(table.names)
+    families = _check_supported(table.names, symmetry, ab_shift)
     rng = np.random.default_rng() if rng is None else rng
 
     cell = monolayer.cell.array
@@ -114,17 +142,18 @@ def build_stacked_model(
 
     for layer in range(2, n_layers + 1):
         k = rng.choice(len(names), p=probabilities)
-        mode = names[k]
+        mode, family = names[k], families[k]
         angle += (rng.choice(symmetry, p=uniform) + 1) * 2 * np.pi / symmetry
         angle_lattice += (rng.choice(symmetry, p=uniform) + 1) * 2 * np.pi / symmetry
 
-        if "AA" in mode:
-            shift = shifts[k].copy()
-        else:
-            shift = shifts[k] - ab_lattice
-            sign = 1 if layer % 2 == 0 else -1
-            # As in 2022: the rotated lattice offset replaces the in-plane slip (see README).
-            shift[:2] = random_rotation(sign * ab_lattice[:2], angle_lattice)
+        shift = shifts[k].copy()
+        offset = np.zeros(2)
+        if family != "AA":
+            if ab_shift == "full":
+                shift[:2] -= ab_lattice[:2]
+            # AB goes back and forth between two positions, ABC keeps moving the same way.
+            sign = -1 if family == "AB" and layer % 2 == 1 else 1
+            offset = random_rotation(sign * ab_lattice[:2], angle_lattice)
 
         if "ecl" in mode:
             pass
@@ -135,8 +164,7 @@ def build_stacked_model(
                 shift[:2] = reflect_xy(shift[:2], mirror_plane)
             shift[:2] = random_rotation(shift[:2], angle)
 
-        if "AB_" in mode:
-            shift[:2] += ab_lattice[:2]
+        shift[:2] += offset
         total += shift
 
         layer_atoms = monolayer.copy()
@@ -144,7 +172,7 @@ def build_stacked_model(
         structure.extend(layer_atoms)
         records.append(LayerRecord(layer, mode, shift.copy(), total.copy()))
 
-    if "AB_" in mode:
+    if family == "AB":
         c = total - shift
         c[2] = total[2] + shift[2]
     else:

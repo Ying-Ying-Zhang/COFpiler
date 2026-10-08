@@ -10,12 +10,12 @@ from cofpiler.cli import intercalate_main, stack_main
 
 def test_stack_command_reproduces_reference(tmp_path):
     case = CASES["stacking"][1]
-    shutil.copy(DATA / "stacking_aa_ab.xlsx", tmp_path)
+    shutil.copy(DATA / case["table"], tmp_path)
     shutil.copy(DATA / "hexagonal_monolayer.extxyz", tmp_path)
     stack_main(
         [
             "-data",
-            "stacking_aa_ab.xlsx",
+            case["table"],
             "-i",
             "hexagonal_monolayer.extxyz",
             "-path",
@@ -87,7 +87,9 @@ def test_input_errors_are_reported_without_traceback(tmp_path, capsys):
             ]
         )
     assert exit_info.value.code == 2
-    assert "cofpiler: error: stacking type 'ABC_ecl'" in capsys.readouterr().err
+    error = capsys.readouterr().err
+    assert "cofpiler: error: the table has AB or ABC stacking types" in error
+    assert "--ab-shift" in error
 
 
 def test_missing_input_file_is_reported(tmp_path, capsys):

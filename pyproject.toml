@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cofpiler"
-version = "1.1.0"
+version = "1.2.0"
 description = "Statistical stacking models of layered materials from Boltzmann-weighted stacking modes"
 readme = "README.md"
 license = "MIT"

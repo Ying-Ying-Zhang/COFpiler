@@ -43,14 +43,14 @@ def main() -> None:
     for case in cases["stacking"]:
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp)
-            shutil.copy(DATA / "stacking_aa_ab.xlsx", work)
+            shutil.copy(DATA / case["table"], work)
             shutil.copy(DATA / "hexagonal_monolayer.extxyz", work)
             run_legacy(
                 "COFpiler.py",
                 case["seed"],
                 [
                     "-data",
-                    "stacking_aa_ab.xlsx",
+                    case["table"],
                     "-i",
                     "hexagonal_monolayer.extxyz",
                     "-path",

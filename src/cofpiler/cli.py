@@ -113,6 +113,12 @@ def stack_main(argv: Sequence[str] | None = None) -> None:
     parser.add_argument(
         "--ab-slip", choices=["axis", "diag"], help="for C4 only: which AB slip the table describes"
     )
+    parser.add_argument(
+        "--ab-shift",
+        choices=["slip", "full"],
+        help="for tables with AB or ABC types: their x, y are the slip on top of the AB "
+        "position (slip) or include the offset to it (full)",
+    )
     args = parser.parse_args(argv)
     try:
         _stack(args)
@@ -140,6 +146,7 @@ def _stack(args: argparse.Namespace) -> None:
                 mirror=args.mirror,
                 mirror_plane=args.mplane,
                 ab_slip=args.ab_slip,
+                ab_shift=args.ab_shift,
                 rng=rng,
             )
             filename = out / f"{args.L}_{model}.{args.outstr_format}"
