@@ -1,10 +1,9 @@
 {
   "stacking": [
-    {"name": "stack_c6_t293_seed0", "seed": 0, "temperature": 293, "layers": 6, "symmetry": "C6", "mirror": true},
-    {"name": "stack_c6_t5000_seed1", "seed": 1, "temperature": 5000, "layers": 8, "symmetry": "C6", "mirror": true},
-    {"name": "stack_c6_t5000_seed2_nomirror", "seed": 2, "temperature": 5000, "layers": 8, "symmetry": "C6", "mirror": false},
-    {"name": "stack_c3_t5000_seed3", "seed": 3, "temperature": 5000, "layers": 5, "symmetry": "C3", "mirror": true},
-    {"name": "stack_c6_t5000_seed7_ab_s2", "seed": 7, "temperature": 5000, "layers": 8, "symmetry": "C6", "mirror": true}
+    {"name": "stack_c6_t293_seed0", "table": "stacking_aa_ab.xlsx", "seed": 0, "temperature": 293, "layers": 6, "symmetry": "C6", "mirror": true},
+    {"name": "stack_aa_c6_t5000_seed1", "table": "stacking_aa.xlsx", "seed": 1, "temperature": 5000, "layers": 8, "symmetry": "C6", "mirror": true},
+    {"name": "stack_aa_c6_t5000_seed4_nomirror", "table": "stacking_aa.xlsx", "seed": 4, "temperature": 5000, "layers": 8, "symmetry": "C6", "mirror": false},
+    {"name": "stack_aa_c3_t5000_seed3", "table": "stacking_aa.xlsx", "seed": 3, "temperature": 5000, "layers": 6, "symmetry": "C3", "mirror": true}
   ],
   "intercalate": [
     {"name": "inter_t293_seed0", "seed": 0, "temperature": 293, "period": 3, "sets": 2},

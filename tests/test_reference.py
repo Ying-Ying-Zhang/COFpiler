@@ -1,4 +1,7 @@
-"""The package reproduces the 2022 scripts (see tests/data/make_reference.py)."""
+"""The package reproduces the 2022 scripts (see tests/data/make_reference.py).
+
+For stacking, only models of AA layers: AB and ABC layers differ from 2022 on purpose.
+"""
 
 import numpy as np
 import pytest
@@ -16,14 +19,15 @@ def assert_same_structure(actual: Atoms, expected: Atoms) -> None:
 
 
 @pytest.mark.parametrize("case", CASES["stacking"], ids=lambda c: c["name"])
-def test_stacking_matches_2022_script(case):
+def test_aa_stacking_matches_2022_script(case):
     structure, _ = build_stacked_model(
         read(DATA / "hexagonal_monolayer.extxyz"),
-        StackingTable.read(DATA / "stacking_aa_ab.xlsx"),
+        StackingTable.read(DATA / case["table"]),
         n_layers=case["layers"],
         temperature=case["temperature"],
         symmetry=int(case["symmetry"][1:]),
         mirror=case["mirror"],
+        ab_shift="slip",
         rng=np.random.RandomState(case["seed"]),
     )
     assert_same_structure(structure, read(REFERENCE / f"{case['name']}.extxyz"))

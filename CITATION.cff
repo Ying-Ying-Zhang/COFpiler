@@ -4,7 +4,7 @@ authors:
   - family-names: Zhang
     given-names: Yingying
 title: "COFpiler"
-version: 1.1.0
+version: 1.2.0
 license: MIT
 repository-code: "https://github.com/Ying-Ying-Zhang/COFpiler"
 preferred-citation:
